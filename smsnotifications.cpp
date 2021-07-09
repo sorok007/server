@@ -125,7 +125,7 @@ void SMSNotificationsProcessor::processNewValue(const QString &parameterName, co
             NotificationConfig& c = m_alerts[configKeyName];
             if (c.enabled()) {
                 sendSms = true;
-                message = c.message().arg(boreNumStr).arg(value == "3" ? "включен" : "выключен");
+                message = c.message().arg(boreNumStr).arg(value == "3" ? "On" : "Off");
                 Q_FOREACH(QString phoneKey, c.phonesList()) {
                     if (m_phones.contains(phoneKey)) {
                         phonesList.append(m_phones.value(phoneKey));

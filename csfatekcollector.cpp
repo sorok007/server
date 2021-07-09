@@ -50,6 +50,7 @@ void CSFatekCollector::readyRead()
     QByteArray responce = m_socket->readAll();
     if (m_sendRequested){
         {//Запись дампа
+
             QString textDump = m_stationString + QString::number(m_forSending.first().station) + ": ";
             textDump += makeDumpLog(responce);
             emit newDumpLog(textDump);
@@ -70,6 +71,7 @@ void CSFatekCollector::readyRead()
             emit newLog(m_logFormat.arg("Ошибка записи регистра"));
         }
         m_forSending.removeFirst();
+        m_sendRequested=false;
         nextRequest();
         return;
     }
@@ -255,7 +257,7 @@ void CSFatekCollector::send()
     request.append(s_stationID[1].toLatin1());
     request.append(s_stationID[2].toLatin1());
     request.append("4701R"); // Запись регистра
-    QString s_register = QString::number(m_forSending.first().address+0x100000,16).toUpper();
+    QString s_register = QString::number(m_forSending.first().address+100000,10).toUpper();
     request.append(s_register[1].toLatin1());
     request.append(s_register[2].toLatin1());
     request.append(s_register[3].toLatin1());
@@ -269,7 +271,7 @@ void CSFatekCollector::send()
     addHash(request);
     request.append(0x03); // ETX
     m_socket->write(request);
-    emit newDumpLog(makeDumpLog(request).prepend(m_stationString+QString::number(m_stationIds[m_nextStationIndexForRequesting])+">> "));
+  // emit newDumpLog(makeDumpLog(request).prepend(m_stationString+QString::number(m_stationIds[m_nextStationIndexForRequesting])+">> "));
 }
 
 void CSFatekCollector::nextRequest()
@@ -277,7 +279,7 @@ void CSFatekCollector::nextRequest()
     // Отправка значений регистров
     if (m_socket->state() != QTcpSocket::ConnectedState){
         foreach(ForSending forSending, m_forSending){
-            emit sended(forSending.sendingId, false);
+          emit sended(forSending.sendingId, false);
         }
         m_forSending.clear();
         return;

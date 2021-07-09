@@ -9,6 +9,7 @@
 #include "cssqlitestorage.h"
 #include "cssupervisorserver.h"
 #include "csfatekcollector.h"
+#include "csmodbuscollector.h"
 #include "csmodbusserver.h"
 #include "smsnotifications.h"
 
@@ -23,7 +24,9 @@ public:
     bool sendSMS(const QString& number, const QString& text);
 private:
     MainWindow m_mainWindow;
-    QVector<PumpStationDefinition>* m_vnsDefinitions;
+    QVector<PumpStationDefinition>* m_vnsFatekDefinitions;
+    QVector<PumpStationDefinition>* m_knsFatekDefinitions;
+    QVector<PumpStationDefinition>* m_knsModbusDefinitions;
     CSSettings *m_settings;
     CSSQLiteStorage *m_sqlstorage;
     CSSupervisorServer *m_supervisorServer;
@@ -32,6 +35,8 @@ private:
     QStringList m_boreIds;
     QStringList m_koskIds;
     QHash<QString, CSFatekCollector*> m_vnsFatekCollectors;
+    QHash<QString, CSFatekCollector*> m_knsFatekCollectors;
+    QHash<QString, CSModbusCollector*> m_knsModbusCollectors;
     CSModbusServer *m_modbusServer;
     QHash<QTcpSocket*, QSet<QString> > m_socketRegisters;
     QDateTime m_startingTime;
@@ -44,10 +49,14 @@ private:
     void setModbusServer();
     void setBores();
     void setKosk();
-    void setVNS(const PumpStationDefinition &def);
+    void setVNS(PumpStationDefinition &def);
+    void setFatekKNS(const QString &name);
+    void setModbusKNS(const QString &name);
     void requestVNS(const QString& name);
     void sendReg(QTcpSocket *socket, const QString &fullName, const QString &fullValue);
     void setPressure(const QString &name, const QString &value);
+    void setKNSOverworkTime(const QString &stationName, const QString &value);
+    void setKNSInactivityTime(const QString &stationName, const QString &value);
 
 signals:
 
@@ -63,6 +72,8 @@ public slots:
     void newBoresRegisterArray(const CSRegistersArray &registerArray);
     void newKosksRegisterArray(const CSRegistersArray &registerArray);
     void newVnsRegisterArray(const CSRegistersArray &registerArray);
+    void newFatekKnsRegisterArray(const CSRegistersArray &registerArray);
+    void newModbusKnsRegisterArray(const CSRegistersArray &registerArray);
     void socketDisconnected(QTcpSocket* socket);
     void newValue(const QString &fullName, const QString &fullValue);
     void dumpModbusMsg(const QString &msg);

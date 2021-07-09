@@ -3,7 +3,6 @@
 #include <QObject>
 #include <QString>
 #include <QMap>
-#include <QStringList>
 
 class Server;
 

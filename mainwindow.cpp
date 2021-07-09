@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "3rdParty/SimpleQtLogger/simpleQtLogger.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -19,14 +20,20 @@ MainWindow::~MainWindow()
     delete smsForm;
 }
 
-void MainWindow::setLogLine(const QString &log)
+void MainWindow::setLogLine(const QString &log, LogTarget logTarget)
 {
-    static quint64 n = 1;
-    static QStringList textLog;
-    QString nlog = log;
-    textLog.prepend(nlog.prepend(QString::number(n++)+") "));
-    if (textLog.size() > 100)
-        textLog.removeLast();
-    QString text = textLog.join(QString("\n"));
-    this->ui->textLog->setPlainText(text);
+    if (logTarget & LogTarget::FILE) {
+        L_INFO(log);
+    }
+
+    if (logTarget & LogTarget::WINDOW){
+        static quint64 n = 1;
+        static QStringList textLog;
+        QString nlog = log;
+        textLog.prepend(nlog.prepend(QString::number(n++)+") "));
+        if (textLog.size() > 100)
+            textLog.removeLast();
+        QString text = textLog.join(QString("\n"));
+        this->ui->textLog->setPlainText(text);
+    }
 }

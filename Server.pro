@@ -22,7 +22,9 @@ SOURCES += main.cpp\
     csfatekcollector.cpp \
     bore.cpp \
     smsform.cpp \
-    smsnotifications.cpp
+    smsnotifications.cpp \
+	3rdParty/SimpleQtLogger/simpleQtLogger.cpp \
+    csmodbuscollector.cpp
 
 HEADERS  += mainwindow.h \
     cstypes.h \
@@ -34,7 +36,9 @@ HEADERS  += mainwindow.h \
     csfatekcollector.h \
     bore.h \
     smsform.h \
-    smsnotifications.h
+    smsnotifications.h \
+	3rdParty/SimpleQtLogger/simpleQtLogger.h \
+    csmodbuscollector.h
 
 FORMS    += mainwindow.ui \
     bore.ui \

@@ -117,7 +117,7 @@ Server::Server(QObject *parent) : QObject(parent)
     m_vnsFatekDefinitions->push_back({QString("vns6"), 3, 0, 40});
     m_vnsFatekDefinitions->push_back({QString("vns7"), 7, 0, 31});
     m_vnsFatekDefinitions->push_back({QString("vns8"), -1, 0, 12});
-    m_vnsFatekDefinitions->push_back({QString("_bs"), -1, 0, 6});
+    m_vnsFatekDefinitions->push_back({QString("_bs"), -1, 0, 10});
 
     /*foreach (PumpStationDefinition def, *m_vnsFatekDefinitions) {
         this->setVNS(def);
@@ -1895,6 +1895,26 @@ void Server::newVnsRegisterArray(const CSRegistersArray &registerArray)
                 int lvalue = registerArray.getRegister(RL);
                 int value = lvalue + hvalue*0x10000;
                 m_sqlstorage->archiveRecord(stationName, "m1Value", value, OnChange | ToStorage);
+            }
+        }
+        //дополнительный расходомер
+        {
+            //Расход Q2 м3/ч
+            int R = 8;
+            if (registerArray.isWithRegister(R)){
+                int value = registerArray.getRegister(R);
+                m_sqlstorage->archiveRecord(stationName, "mh2Value", value, OnChange | ToStorage);
+            }
+        }
+        {
+            //Объем V2, м3
+            int RH = 6;
+            int RL = 7;
+            if (registerArray.isWithRegister(RH) && registerArray.isWithRegister(RL)){
+                int hvalue = registerArray.getRegister(RH);
+                int lvalue = registerArray.getRegister(RL);
+                int value = lvalue + hvalue*0x10000;
+                m_sqlstorage->archiveRecord(stationName, "m2Value", value, OnChange | ToStorage);
             }
         }
         {
